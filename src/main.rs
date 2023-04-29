@@ -19,9 +19,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let routes = hello
         .with(warp::trace::request());
 
-    let port = std::env::var("PORT")?
-        .parse()
-        .unwrap_or(8080u16);
+    let port = std::env::var("PORT")
+        .unwrap_or("8080".to_owned())
+        .parse()?;
 
     warp::serve(routes)
         .bind(([0, 0, 0, 0], port))
