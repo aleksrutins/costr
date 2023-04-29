@@ -33,6 +33,8 @@ respondHandler :: [T.Text] -> [Handler] -> Handler
 respondHandler path handlers = respondHandlerInternal path handlers $ Handler {path = [], script = "Main"}
 
 respondHandlerInternal :: [T.Text] -> [Handler] -> Handler -> Handler
+respondHandlerInternal _ [] latestHandler = latestHandler
+
 respondHandlerInternal pathToMatch [handler] latestHandler =
     if (path handler `L.isPrefixOf` pathToMatch) && (path latestHandler `L.isPrefixOf` path handler) then
         handler
