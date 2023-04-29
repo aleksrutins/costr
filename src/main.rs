@@ -1,8 +1,10 @@
+use std::error::Error;
+
 use tracing_subscriber::fmt::format::FmtSpan;
 use warp::Filter;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,warp=debug".to_owned());
 
     tracing_subscriber::fmt()
@@ -16,8 +18,13 @@ async fn main() {
 
     let routes = hello
         .with(warp::trace::request());
-    
+
+    let port = std::env::var("PORT")?
+        .parse()
+        .unwrap_or(8080u16);
+
     warp::serve(routes)
-        .bind(([127, 0, 0, 1], 8080))
+        .bind(([0, 0, 0, 0], port))
         .await;
+    Ok(())
 }
